@@ -31,15 +31,13 @@ with Image.open('C:\Python36-32\E.png').convert('L') as imgE:
 ####################################
 
 maxiterlimit = 20
-Ep = np.full((width*height+1,3), 0.00001) # the vigilance level for checking the convergence of weight vectors
+Ep = np.full((2,3), 0.00000001) # the vigilance level for checking the convergence of weight vectors
 alpha = 0.00001 #learning rate
 epoch = 1
-w_curr_epoch = np.zeros((width*height+1,3)) 
+w_curr_epoch = np.zeros((2,3)) 
 w_curr_epoch[0] = np.random.rand(1,3) #Generates random values for w(0) from 0-1
-w_last_epoch = np.zeros((width*height+1, 3))
+w_last_epoch = np.zeros((2, 3))
 x = np.zeros((width*height, 3))
-a = np.zeros((width*height, 1))
-e = np.zeros((width*height, 1))
 
 #################################
 # Set x(k) = [K1(k),K2(k),I(k)] #
@@ -52,18 +50,22 @@ for i in range(width*height):
 #    Finding w=[w1, w2, w3]    #
 ################################
 
-while (epoch==1) or (epoch < maxiterlimit) and (np.any((np.absolute(np.array(w_curr_epoch) - np.array(w_last_epoch))) > Ep)):
+while (epoch==1) or (epoch < maxiterlimit+1) and (np.any((np.absolute(np.array(w_curr_epoch) - np.array(w_last_epoch))) > Ep)):
 	for k in range(width*height):
-		a[k] = w_curr_epoch[k].dot(x[k])
-		e[k] = E[k] - a[k]
-		w_last_epoch[k] = w_curr_epoch[k]
-		temp = alpha*(e[k])
-		w_curr_epoch[k+1] = w_curr_epoch[k] + temp*(x[k])
+		a = w_curr_epoch[0].dot(x[k])
+		e = E[k] - a
+		w_last_epoch = w_curr_epoch
+		temp = alpha*e
+		w_curr_epoch[1] = w_curr_epoch[0] + temp*(x[k])
+		w_curr_epoch[0] = w_curr_epoch[1]
 	
-	print(epoch)
+	print("Epoch (",epoch,"/",maxiterlimit,")")
 	epoch = epoch+1
-print (w_curr_epoch) #Prints the [w1,w2,w3] for each pixel
-
+print()
+print("##  W vector  ##")
+print()
+print (w_curr_epoch[1]) #Prints the [w1,w2,w3] for each pixel
+np.savetxt('C:\Python36-32\w.txt', w_curr_epoch[1])
 
 ##################################
 #      Decryption test           #
@@ -74,7 +76,7 @@ with Image.open('C:\Python36-32\Eprime.png').convert('L') as imgEprime:
 
 tempIprime = np.full((width*height, 1), 0)
 for i in range(width*height):
-	tempIprime[i] = (Eprime[i] - w_curr_epoch[i+1][0]*k1[i] - w_curr_epoch[i+1][1]*k2[i]) / w_curr_epoch[i+1][2] #Decryption formula
+	tempIprime[i] = (Eprime[i] - w_curr_epoch[1][0]*k1[i] - w_curr_epoch[1][1]*k2[i]) / w_curr_epoch[1][2] #Decryption formula
 	#Ensuring that tempIprime is within 0 - 255
 	if tempIprime[i] < 1: 
 		tempIprime[i] = 0
