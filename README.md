@@ -37,7 +37,7 @@ epoch = 1
 w_curr_epoch = np.zeros((width*height+1,3)) 
 w_curr_epoch[0] = np.random.rand(1,3) #Generates random values for w(0) from 0-1
 w_last_epoch = np.zeros((width*height+1, 3))
-x = np.zeros((width*height+1, 3))
+x = np.zeros((width*height, 3))
 a = np.zeros((width*height, 1))
 e = np.zeros((width*height, 1))
 
