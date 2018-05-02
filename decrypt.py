@@ -5,6 +5,8 @@
 #                                  #
 ####################################
 
+# Most of the code development history is in the README.md
+# The code changes were committed there.
 
 
 ##################################
@@ -27,16 +29,16 @@ with Image.open('C:\Python36-32\E.png').convert('L') as imgE:
 
 ####################################
 # Declarations and initializations #
-# of the variables				   #
+# of the variables		   #
 ####################################
 
-maxiterlimit = 20
+maxiterlimit = 20	#Max number of epoch iterations
 Ep = np.full((2,3), 0.00000001) # the vigilance level for checking the convergence of weight vectors
 alpha = 0.00001 #learning rate
-epoch = 1
-w_curr_epoch = np.zeros((2,3)) 
+epoch = 1 
+w_curr_epoch = np.zeros((2,3))  # w vector of the current epoch.
 w_curr_epoch[0] = np.random.rand(1,3) #Generates random values for w(0) from 0-1
-w_last_epoch = np.zeros((2, 3))
+w_last_epoch = np.zeros((2, 3)) # w vector of the previous epoch
 x = np.zeros((width*height, 3))
 
 #################################
@@ -52,26 +54,26 @@ for i in range(width*height):
 
 while (epoch==1) or (epoch < maxiterlimit+1) and (np.any((np.absolute(np.array(w_curr_epoch) - np.array(w_last_epoch))) > Ep)):
 	for k in range(width*height):
-		a = w_curr_epoch[0].dot(x[k])
+		a = w_curr_epoch[0].dot(x[k]) #w[0] represents w[k]
 		e = E[k] - a
 		w_last_epoch = w_curr_epoch
 		temp = alpha*e
-		w_curr_epoch[1] = w_curr_epoch[0] + temp*(x[k])
-		w_curr_epoch[0] = w_curr_epoch[1]
+		w_curr_epoch[1] = w_curr_epoch[0] + temp*(x[k]) # w[1] represents w[k+1]
+		w_curr_epoch[0] = w_curr_epoch[1] # Imitates the movement through w[k] as k increase.
 	
 	print("Epoch (",epoch,"/",maxiterlimit,")")
 	epoch = epoch+1
 print()
 print("##  W vector  ##")
 print()
-print (w_curr_epoch[1]) #Prints the [w1,w2,w3] for each pixel
-np.savetxt('C:\Python36-32\w.txt', w_curr_epoch[1])
+print (w_curr_epoch[1]) #Prints the [w1,w2,w3]
+np.savetxt('C:\Python36-32\w.txt', w_curr_epoch[1])#Prints the [w1,w2,w3] to a file for future use
 
 ##################################
 #      Decryption test           #
 ##################################
 
-with Image.open('C:\Python36-32\E.png').convert('L') as imgEprime:
+with Image.open('C:\Python36-32\Eprime.png').convert('L') as imgEprime:
 	Eprime=(list(imgEprime.getdata()))
 
 tempIprime = np.full((width*height, 1), 0)
@@ -87,5 +89,5 @@ for i in range(width*height):
 tempIprime = np.asarray(tempIprime, dtype=np.uint8) #converts the values back to int
 tempIprime.resize((height,width)) #resize the array to the dimensions of the picture
 Iprime = Image.fromarray(tempIprime, mode='L') #Converts the array into a grayscale image
-Iprime.save('C:\Python36-32\Iprime0.png') #Saves the image
+Iprime.save('C:\Python36-32\Iprime.png') #Saves the image
 Iprime.show() #display image
