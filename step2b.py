@@ -4,6 +4,8 @@ import cv2
 import openface
 import os
 
+#DRE WAS YAH
+
 from PIL import Image
 import glob
 image_list = []
